@@ -33,7 +33,3 @@ npm run dev
 2、加速node-sass安装
 
 https://www.ydyno.com/archives/1219.html
-
-3、echarts版本不要用5.0.0
-安装命令
-npm install echarts@4.2.0-rc.2 --save
