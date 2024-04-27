@@ -22,10 +22,10 @@
             <li>
               <p>
                 <span>订单状态:</span>
-                <span v-if="order.state === 1">待付款</span>
-                <span v-if="order.state === 2">待发货</span>
-                <span v-if="order.state === 3">待收货</span>
-                <span v-if="order.state === 4">已完成</span>
+                <span v-if="order.state === 1">待支付</span>
+                <span v-if="order.state === 2">待接单</span>
+                <span v-if="order.state === 3">服务中</span>
+                <span v-if="order.state === 4">服务完成</span>
                 <span v-if="order.state === 5">已取消</span>
               </p>
               <p>
@@ -40,27 +40,21 @@
                 <span v-if="order.paymentMode === 2">支付宝</span>
               </p>
               <p>
-                <span>物流方案:</span>
-                <span>{{ order.logisticsName }}</span>
-              </p>
-            </li>
-            <li>
-              <p>
                 <span>创建时间:</span>
                 <span>{{ order.createTime }}</span>
               </p>
+            </li>
+            <li>
               <p>
                 <span>支付时间:</span>
                 <span>{{ order.paymentTime }}</span>
               </p>
-            </li>
-            <li>
               <p>备注:{{ order.remark }}</p>
             </li>
           </ul>
         </div>
         <div class="goods_info">
-          <h2>商品信息</h2>
+          <h2>服务信息</h2>
           <div
             v-for="(item, index) in order.products"
             :key="index"
@@ -69,18 +63,20 @@
             <div class="good_price">
               <ul>
                 <li>
-                  <p>商品总价: ¥{{ order.orderPrice }}</p>
+                  <p>服务总价: ¥{{ order.orderPrice }}</p>
                   <p>支付金额: ¥{{ order.price }}</p>
                 </li>
-                <li>
+                <!-- <li>
                   <p>物流费用: ￥{{ order.logisticsPrice }}</p>
-                </li>
+                </li> -->
               </ul>
+              <!-- 清除浮动 -->
+              <div style="clear: both" />
             </div>
             <div class="good_details">
               <ul>
                 <li>
-                  <img :src="item.image">
+                  <img :src="item.image" />
                   <div class="details">
                     <p>{{ item.productName }}</p>
                     <p class="skuDetails">
@@ -107,50 +103,36 @@
         </div>
         <!-- 未发货时物流信息显示去发货按钮 -->
         <!-- <div class="logistics_info" v-show="order.logisticsName && order.logisticsNum"> -->
-        <div class="logistics_info">
+        <!-- <div class="logistics_info">
           <h2>物流信息</h2>
-          <!-- <p
-            v-if="!order.logisticsNum"
-            class="send_good"
-            @click="send"
-          >
-            去发货
-          </p>-->
           <el-button
             v-if="!order.logisticsNum && order.state == 2"
             type="primary"
             class="send_good"
             @click="send"
-          >去发货</el-button>
+            >去发货</el-button
+          >
           <div v-else class="logistics_content">
             <p class="logistics_title">
               <span>物流公司: {{ order.express }}</span>
               <span>运单号: {{ order.deliverFormid }}</span>
             </p>
-            <!-- <p
-              v-for="(item, index) in tracesList"
-              :key="index"
-              class="logistics_item"
-            >
-              <span>{{ item.acceptTime }}</span>
-              <span>{{ acceptStation }}</span>
-            </p> -->
           </div>
-        </div>
+        </div> -->
       </div>
       <div class="right_part">
         <div class="pay_order_info">
           <h2>下单人信息</h2>
-          <p>下单账户: {{ order.customerName }}</p>
+          <p>客户名称: {{ order.customerName }}</p>
           <p>订单总数: {{ order.total }}个</p>
           <p>下单备注: {{ order.remark }}</p>
         </div>
-        <div class="take_goods_info">
+        <!-- <div class="take_goods_info">
           <h2>收货信息</h2>
           <p>姓名: {{ order.receiveName }}</p>
           <p>手机号: {{ order.receivePhone }}</p>
-          <p>地址: {{ order.receiveAdress }} {{order.address}}</p>
-        </div>
+          <p>地址: {{ order.receiveAdress }} {{ order.address }}</p>
+        </div> -->
       </div>
     </div>
     <!-- 发货 -->
@@ -195,79 +177,79 @@
 </template>
 
 <script>
-import { orderGetById, orderGetSelect, orderDilevery } from '@/api/order'
+import { orderGetById, orderGetSelect, orderDilevery } from "@/api/order";
 export default {
   data() {
     return {
       order: {},
       form: {
         orderId: this.orderId,
-        express: '',
-        deliverFormid: ''
+        express: "",
+        deliverFormid: "",
       },
       isVisible: false,
       rules: {
         logisticsName: [
-          { required: false, message: '请输入快递公司名称', trigger: 'blur' }
+          { required: false, message: "请输入快递公司名称", trigger: "blur" },
         ],
         deliverFormid: [
-          { required: true, message: '请输入快递单号', trigger: 'blur' }
+          { required: true, message: "请输入快递单号", trigger: "blur" },
         ],
         express: [
-          { required: true, message: '请选择快递公司', trigger: 'blur' }
-        ]
+          { required: true, message: "请选择快递公司", trigger: "blur" },
+        ],
       },
-      companyList: []
-    }
+      companyList: [],
+    };
   },
   computed: {
     orderId() {
-      return this.$route.params.orderId
-    }
+      return this.$route.params.orderId;
+    },
   },
   created() {
-    this.getProductList()
+    this.getProductList();
   },
   methods: {
     async getProductList() {
-      const res = await orderGetById({ orderId: this.orderId })
-      this.order = res.data
+      const res = await orderGetById({ orderId: this.orderId });
+      this.order = res.data;
     },
     close() {
-      this.$router.go(-1)
+      this.$router.go(-1);
     },
     confirm() {
       this.$refs.sendGoodsForm.validate((valid) => {
         if (valid) {
-          this.form.orderId = this.orderId
+          this.form.orderId = this.orderId;
           orderDilevery(this.form).then((res) => {
-            if (res.code === '') {
+            if (res.code === "") {
               this.$message({
-                message: '发货成功',
-                type: 'success'
-              })
-              this.isVisible = false
-              this.$router.go(-1)
+                message: "发货成功",
+                type: "success",
+              });
+              this.isVisible = false;
+              this.$router.go(-1);
             }
-          })
+          });
         }
-      })
+      });
     },
     cancel() {
-      this.isVisible = false
+      this.isVisible = false;
     },
     async getCompanyList() {
-      const res = await orderGetSelect()
-      if (res.code === '') {
-        this.companyList = res.data
+      const res = await orderGetSelect();
+      if (res.code === "") {
+        this.companyList = res.data;
       }
     },
     send() {
-      this.getCompanyList()
-      this.isVisible = true
-    }
-  }
-}
+      this.getCompanyList();
+      this.isVisible = true;
+    },
+  },
+};
 </script>
 
 <style lang="scss" scoped>
@@ -306,9 +288,9 @@ ul {
       padding: 10px 20px;
     }
     .pay_order_info,
-    .take_goods_info{
-      p{
-         line-height: 30px;
+    .take_goods_info {
+      p {
+        line-height: 30px;
       }
     }
     h2 {
@@ -368,7 +350,7 @@ ul {
           .good_details {
             ul {
               display: flex;
-              margin-top:20px;
+              margin-top: 20px;
               li {
                 flex: 3;
                 display: flex;
