@@ -1,5 +1,21 @@
 <template>
   <div class="style-information-component">
+    <label style="margin-right: 10px;">商品标签</label>
+    <el-select v-model="form.choosenLabels" multiple>
+      <el-option
+        v-for="(item, index) in labels"
+        :key="index"
+        :label="item.label"
+        :value="item.label"
+        >
+        <el-tag
+          :key="index"
+          :color="item.color"
+        >
+          <span style="color: azure;">{{ item.label }}</span>
+        </el-tag>
+      </el-option>
+    </el-select>
     <el-form-item label="商品图片" />
     <div class="upload-wrap">
       <el-upload
@@ -193,7 +209,9 @@
   </div>
 </template>
 <script>
-import { uploadUrl } from '@/utils/request'
+import { uploadUrl } from '@/utils/request';
+import { getClassify } from '@/api/commodity';
+
 export default {
   filters: {
     attrValueFilter(map, list) {
@@ -232,6 +250,62 @@ export default {
       }
     }
   },
+  mounted() {
+    getClassify().then(res => {
+      if (this.form.classifyId === '') {
+
+      }
+      if (!(this.form.classifyId instanceof Array)) {
+        this.form.classifyId = [this.form.classifyId];
+      }
+      const len = this.form.classifyId.length;
+      let target = res.data.find(item => item.id === this.form.classifyId[len - 1]);
+      if (!target) {
+        for (const item of res.data) {
+          target = item.childs.find(subItem => subItem.id === this.form.classifyId[len - 1]);
+          if (target) {
+            break;
+          }
+        }
+      }
+
+      if (!target) {
+        return;
+      }
+
+      let categories = new Set();
+      if (target.depth === 1) {
+        categories = new Set(target.childs.map(item => item.categoryName));
+        if (len === 1 && this.form.classifyId[0] === 807) {
+          categories = categories.union(new Set(['自理', '失能', '失智'])).union(new Set(['一星级', '二星级', '三星级', '四星级', '五星级']));
+        }
+      } else {
+        categories = new Set([target.categoryName]);
+      }
+      this.labels = [...categories].map(item => ({
+        label: item,
+        type: ''
+      }));
+
+      // 筛选展示的标签
+      this.form.choosenLabels = this.form.choosenLabels.filter(label => {
+        for (const item of this.labels) {
+          if (item.label === label) {
+            return true;
+          }
+        }
+        return false;
+      });
+      // 标签上色
+      let index = Math.floor(Math.random() * this.colorList.length);
+      for (const item of this.labels) {
+        if (index === this.colorList.length) {
+          index = 0;
+        }
+        item.color = this.colorList[index++];
+      }
+    });
+  },
   data() {
     return {
       dialogImageUrl: '',
@@ -245,6 +319,19 @@ export default {
         folderId: 1
       },
       fileList: [],
+      labels: [],
+      colorList: [
+        "#F6C600",
+        "#EF7F00",
+        "#F29596",
+        "#EC453C",
+        "#8A43E1",
+        "#87CB4C",
+        "#43A79E",
+        "#73B8EE",
+        "#3C80E8",
+        "#21317B"
+      ]
     }
   },
   computed: {

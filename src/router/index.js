@@ -335,7 +335,7 @@ export const constantRoutes = [{
   redirect: '/commodity',
   name: 'commodity',
   meta: {
-    title: '商品',
+    title: '服务',
     icon: 'el-icon-s-help'
   },
   children: [{
@@ -343,7 +343,7 @@ export const constantRoutes = [{
     name: 'commoditySystem',
     component: () => import('@/views/commodity/commoditySystem/index'),
     meta: {
-      title: '商品管理',
+      title: '服务管理',
       icon: 'table'
     }
   },
@@ -362,7 +362,7 @@ export const constantRoutes = [{
     name: 'commodityList',
     component: () => import('@/views/commodity/commodityList/index'),
     meta: {
-      title: '商品分组',
+      title: '服务分组',
       icon: 'tree'
     }
   },

@@ -5,8 +5,8 @@
       <!-- 搜索 -->
       <div class="formSearch">
         <el-form :inline="true" :model="formInline" class="demo-form-inline">
-          <el-form-item label="商品名称">
-            <el-input v-model="formInline.search" placeholder="请输入商品名称" />
+          <el-form-item label="服务名称">
+            <el-input v-model="formInline.search" placeholder="请输入服务名称" />
           </el-form-item>
           <el-form-item label="上架状态">
             <el-select v-model="formInline.shelveState" placeholder="请选择上架状态">
@@ -15,7 +15,7 @@
               <el-option label="下架" value="0" />
             </el-select>
           </el-form-item>
-          <el-form-item label="官方分类">
+          <el-form-item label="服务分类">
             <el-cascader
               v-model="formInline.classifyId"
               :options="categoryList"
@@ -48,13 +48,13 @@
           tooltip-effect="dark"
           style="width: 100%"
         >
-          <el-table-column prop="productId" label="商品id" show-overflow-tooltip />
-          <el-table-column label="商品主图" width="150" align="center">
+          <el-table-column prop="productId" label="服务id" show-overflow-tooltip />
+          <el-table-column label="服务主图" width="150" align="center">
             <template slot-scope="scope">
               <img height="80" width="80" :src="scope.row.productImage " alt srcset>
             </template>
           </el-table-column>
-          <el-table-column prop="productName" label="商品名称" width="220" />
+          <el-table-column prop="productName" label="服务名称" width="220" />
           <el-table-column prop="section" label="售价区间" show-overflow-tooltip />
           <el-table-column prop="memberSection" label="会员价" show-overflow-tooltip />
           <el-table-column prop="stockNumber" label="库存" show-overflow-tooltip />
@@ -95,7 +95,7 @@
     </div>
     <!-- 批量导入 -->
     <el-dialog
-      title="批量导入商品"
+      title="批量导入服务"
       :visible.sync="batchAdd"
       :close-on-click-modal="false"
       center
@@ -237,7 +237,7 @@ export default {
       console.log(id)
       if (id.permissionName === '批量导入') {
         this.sends()
-      } else if (id.permissionName === '新增商品') {
+      } else if (id.permissionName === '新增服务') {
         this.add()
       }
     },
@@ -268,16 +268,16 @@ export default {
         pageSize: 10
       }
     },
-    // 新增商品
+    // 新增服务
     add() {
       this.$router.push({ name: 'addCommodity', params: { id: '1' }})
     },
     // 批量导入
     sends() {
       this.batchAdd = true
-      this.batchFileList = []
+      this.ba会员价tchFileList = []
     },
-    // 编辑商品
+    // 编辑服务
     async edit(row) {
       this.$router.push({
         name: 'addCommodity',
@@ -349,7 +349,7 @@ export default {
         }
       })
     },
-    // 删除商品
+    // 删除服务
     del(row) {
       this.$confirm('选中数据将被永久删除, 是否继续？', '提示', {
         confirmButtonText: '确定',
@@ -369,7 +369,7 @@ export default {
         })
         .catch(() => {})
     },
-    // 商品上下架
+    // 服务上下架
     async down(row) {
       console.log(row.shelveState)
       if (row.shelveState) {
@@ -428,7 +428,7 @@ export default {
         console.log(res, 1111)
         // const content = res
         const blob = new Blob([res])
-        const fileName = '批量导入商品模板.xlsx'
+        const fileName = '批量导入服务模板.xlsx'
         if ('download' in document.createElement('a')) {
           // 非IE下载
           const elink = document.createElement('a')

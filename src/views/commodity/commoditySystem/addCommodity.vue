@@ -4,8 +4,8 @@
     <div>
       <el-card class="box-card">
         <div slot="header">
-          <span v-if="!productId" class="addTitle">新增商品</span>
-          <span v-else class="addTitle">编辑商品</span>
+          <span v-if="!productId" class="addTitle">新增服务</span>
+          <span v-else class="addTitle">编辑服务</span>
           <el-button v-if="active" class="btnList" @click="back">取消</el-button>
           <el-button v-if="active" type="primary" class="btnList" @click="next">下一步</el-button>
           <el-button v-if="!active" type="primary" class="btnList" @click="save">保存</el-button>
@@ -15,24 +15,21 @@
         <div class="stepsColor common">
           <div class="stepsOne common">
             <div :class="active ? 'one_class common' : 't_class common'">1</div>
-            <div :class="active ? 'two_class' : 'w_class'">基本属性&商品描述</div>
+            <div :class="active ? 'two_class' : 'w_class'">基本属性&服务描述</div>
           </div>
           <div class="line" />
           <div class="stepsTwo common">
             <div :class="active ? 't_class common' : 'one_class common'">2</div>
-            <div :class="active ? 'w_class' : 'two_class' ">基本属性&商品描述</div>
+            <div :class="active ? 'w_class' : 'two_class' ">基本属性&服务描述</div>
           </div>
         </div>
       </el-card>
-      <!-- 商品 -->
+      <!-- 服务 -->
       <div class="addCom common">
         <div v-if="active" class="leftCom">
           <el-form ref="form" :model="form" label-width="80px" style="padding: 40px 40px;">
-            <el-form-item label="商品名称">
+            <el-form-item label="服务名称">
               <el-input v-model="form.productName" maxlength="20" />
-            </el-form-item>
-            <el-form-item label="卖点简介">
-              <el-input v-model="form.productBrief" />
             </el-form-item>
             <el-form-item>
               <Tinymce ref="content" v-model="form.productText" class="tinymce-wrap" :height="200" />
@@ -41,7 +38,7 @@
         </div>
         <div v-if="active" class="rightCom">
           <el-form ref="form" :model="form" label-width="80px" style="margin:20px 20px">
-            <el-form-item label="官方分类">
+            <el-form-item label="服务分类">
               <el-cascader
                 v-model="form.classifyId"
                 :options="classifyList"
@@ -54,8 +51,8 @@
                 }"
               />
             </el-form-item>
-            <el-form-item label="商品分组">
-              <el-select v-model="form.shopGroupId" placeholder="请选择商品分组">
+            <!-- <el-form-item label="服务分组">
+              <el-select v-model="form.shopGroupId" placeholder="请选择服务分组">
                 <el-option
                   v-for="(item,index) in groupList"
                   :key="index"
@@ -66,7 +63,7 @@
             </el-form-item>
             <el-form-item label="供应商">
               <el-input v-model="form.supplierName" placeholder="请输入供应商名称" />
-            </el-form-item>
+            </el-form-item> -->
             <el-form-item label="需要物流">
               <el-radio-group v-model="form.ifLogistics">
                 <el-radio :label="1">是</el-radio>
@@ -134,16 +131,16 @@ export default {
       active: 1,
       action: uploadUrl,
       form: {
-        productName: '', // 商品名称
-        productBrief: '', // 商品简介
-        shopGroupId: '', // 商品分组id
+        productName: '', // 服务名称
+        productBrief: '', // 服务简介
+        shopGroupId: '', // 服务分组id
         classifyId: '', // 分类id
         supplierName: '', // 供应商名称
         ifLogistics: '', // 是否需要物流 1-是 0-否
         shelveState: ' ', // 是否上架 1-上架 0-不上架
         ifOversold: '', // 是否允许超卖 1-是 0-否
         ifHuabei: 1, // 是否支持花呗分期 1-是 0-否
-        productText: '', // 商品描述（富文本）
+        productText: '', // 服务描述（富文本）
         images: [], // "图片地址"
         deletes:[], //删除的规格id数组
         names: [
@@ -230,7 +227,9 @@ export default {
         stock: '',
         supplierName: '',
         views: '',
-        weight: ''
+        weight: '',
+        classifyId: 0,
+        choosenLabels: []
       },
       imgList: [],
       groupList: [],
@@ -274,6 +273,7 @@ export default {
         this.active = 0
         // console.log(this.form);
         sessionStorage.setItem('form', JSON.stringify(this.form.skus))
+        this.params.classifyId = this.form.classifyId;
       }
     },
     // 返回
@@ -311,7 +311,8 @@ export default {
         this.form.classifyId[2] ||
         this.form.classifyId[1] ||
         this.form.classifyId[0] ||
-        this.form.classifyId
+        this.form.classifyId;
+      this.form.productBrief = !this.params.choosenLabels || this.params.choosenLabels.length === 0 ? "" : this.params.choosenLabels.join(',')
       console.log(this.form)
       if (this.productId) {
         this.form.productId = this.productId
@@ -350,7 +351,7 @@ export default {
         }
       }
     },
-    // 获取商品分组
+    // 获取服务分组
     async groups() {
       const res = await getGroupSelect({
       })
@@ -373,6 +374,7 @@ export default {
       this.params.skuList = this.form.skus
       this.params.attrStyle = res.data.skus[0].style
       this.params.imgs = res.data.images
+      this.params.choosenLabels = res.data.productBrief.split(',') ? res.data.productBrief.split(',') : []
     },
     async selectList() {
       const res = await getClassify()
