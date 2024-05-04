@@ -43,6 +43,56 @@ export const constantRoutes = [{
 {
   path: '/',
   component: Layout,
+  redirect: '/order/pending',
+  name: '/order/pending',
+  meta: {
+    title: '订单',
+    icon: 'el-icon-s-help'
+  },
+  children: [{
+    path: '/order/pending',
+    name: '/order/pending',
+    component: () => import('@/views/order/pending/index'),
+    meta: {
+      title: '待处理订单',
+      icon: 'table'
+    }
+  },
+  // pendDetails
+  {
+    hidden: true, // (默认 false)
+    path: '/order/pendDetails',
+    name: '/order/pendDetails',
+    component: () => import('@/views/order/pending/pendDetails'),
+    meta: {
+      title: '订单详情',
+      icon: 'table'
+    }
+  },
+  {
+    path: '/order/aftersale',
+    name: '/order/aftersale',
+    component: () => import('@/views/order/aftersale/index'),
+    meta: {
+      title: '售后订单',
+      icon: 'tree'
+    }
+  },
+  {
+    hidden: true, // (默认 false)
+    path: '/order/afterDetails',
+    name: '/order/afterDetails',
+    component: () => import('@/views/order/aftersale/afterDetails'),
+    meta: {
+      title: '售后订单详情',
+      icon: 'tree'
+    }
+  }
+  ]
+},
+{
+  path: '/',
+  component: Layout,
   redirect: '/dashboard',
   children: [{
     path: 'dashboard',
@@ -53,56 +103,6 @@ export const constantRoutes = [{
       icon: 'dashboard'
     }
   }]
-},
-{
-  path: '/order',
-  component: Layout,
-  redirect: '/order',
-  name: 'order',
-  meta: {
-    title: '订单',
-    icon: 'el-icon-s-help'
-  },
-  children: [{
-    path: 'pending',
-    name: 'pending',
-    component: () => import('@/views/order/pending/index'),
-    meta: {
-      title: '待处理订单',
-      icon: 'table'
-    }
-  },
-  // pendDetails
-  {
-    hidden: true, // (默认 false)
-    path: 'pendDetails',
-    name: 'pendDetails',
-    component: () => import('@/views/order/pending/pendDetails'),
-    meta: {
-      title: '订单详情',
-      icon: 'table'
-    }
-  },
-  {
-    path: 'aftersale',
-    name: 'aftersale',
-    component: () => import('@/views/order/aftersale/index'),
-    meta: {
-      title: '售后订单',
-      icon: 'tree'
-    }
-  },
-  {
-    hidden: true, // (默认 false)
-    path: 'afterDetails',
-    name: 'afterDetails',
-    component: () => import('@/views/order/aftersale/afterDetails'),
-    meta: {
-      title: '售后订单详情',
-      icon: 'tree'
-    }
-  }
-  ]
 },
 {
   path: '/marketing',

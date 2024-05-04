@@ -7,11 +7,11 @@
         class="sidebar-logo-link"
         to="/"
       >
-        <img src="../../../assets/images/logo.png" class="sidebar-logo">
+        <img src="../../../assets/images/ykylogo.png" class="sidebar-logo">
         <h1 class="sidebar-title">{{ title }}</h1>
       </router-link>
       <router-link v-else key="expand" class="sidebar-logo-link" to="/">
-        <img src="../../../assets/images/logo.png" class="sidebar-logo">
+        <img src="../../../assets/images/ykylogo.png" class="sidebar-logo">
         <h1 class="sidebar-title">{{ title }}</h1>
       </router-link>
     </transition>
@@ -29,7 +29,7 @@ export default {
   },
   data() {
     return {
-      title: 'cereShop商家端'
+      title: '协作网服务商平台'
     }
   }
 }
@@ -48,7 +48,7 @@ export default {
 .sidebar-logo-container {
   position: relative;
   width: 100%;
-  height: 50px;
+  height: 60px;
   line-height: 50px;
   background: #2b2f3a;
   text-align: center;
@@ -59,10 +59,10 @@ export default {
     width: 100%;
 
     & .sidebar-logo {
-      width: 32px;
-      height: 32px;
+      width: 55px;
+      height: 60px;
       vertical-align: middle;
-      margin-right: 12px;
+      margin-right: 1px;
     }
 
     & .sidebar-title {

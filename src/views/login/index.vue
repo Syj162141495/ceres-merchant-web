@@ -4,7 +4,7 @@
     <div v-if="getPassword" class="loginBox">
       <div class="leftBox" />
       <div class="rightBox">
-        <h2>商家登录</h2>
+        <h2>协作网服务商平台</h2>
         <div class="tabTouch">
           <div
             v-for="(item, index) in activeList"
@@ -230,7 +230,7 @@
       </el-card>
     </div>
     <!--  底部  -->
-    <div class="login-footer">© 2019 cereshop</div>
+    <div class="login-footer">© 协作网</div>
   </div>
 </template>
 
@@ -238,7 +238,7 @@
 // import { validUsername } from '@/utils/validate'
 import { adminBuild, forgetPassword } from '@/api/user'
 const TIME_COUNT = 60 // 更改倒计时时间
-import Background from '@/assets/images/background.jpg'
+import Background from '@/assets/images/bk1.jpg'
 import { getCode } from '@/api/account'
 export default {
   name: 'Login',
@@ -277,16 +277,16 @@ export default {
         username: '' // 手机号
       },
       tabIndex: 0,
-      activeList: [
-        {
-          name: '账户密码登录',
-          id: 0
-        },
-        {
-          name: '手机号码登录',
-          id: 1
-        }
-      ],
+      // activeList: [
+      //   {
+      //     name: '账户密码登录',
+      //     id: 0
+      //   },
+      //   {
+      //     name: '手机号码登录',
+      //     id: 1
+      //   }
+      // ],
       retrievePwdRules: {
         username: [
           { required: true, trigger: 'blur', message: '手机号码不能为空' }
@@ -458,25 +458,31 @@ export default {
   align-items: center;
   height: 100%;
   background-size: cover;
+  padding-top: 150px;
 }
 .loginBox {
-  width: 900px !important;
-  height: 600px;
+  width: 385px !important;
+  height: 390px;
   display: flex;
   background: #ffffff;
   border-radius: 20px;
+  margin-left: 66%;
+  margin-right: auto;
+  margin-top: -10%;
 }
-.leftBox {
-  width: 325px;
-  height: 250px;
-  margin: 180px 0 0 30px;
-  background: url("../../assets/images/home-content.png") 50% no-repeat;
-  background-size: cover;
-}
+// .leftBox {
+//   width: 325px;
+//   height: 250px;
+//   margin: 180px 0 0 30px;
+//   background: url("../../assets/images/home-content.png") 50% no-repeat;
+//   background-size: cover;
+// }
 .rightBox {
   margin: auto;
   h2 {
     text-align: center;
+    font-weight: bold;
+    font-size: 35px;
   }
 }
 .tabTouch {
