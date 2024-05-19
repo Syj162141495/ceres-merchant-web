@@ -11,8 +11,10 @@
           <el-form-item label="上架状态">
             <el-select v-model="formInline.shelveState" placeholder="请选择上架状态">
               <el-option label="全部" :value="null" />
-              <el-option label="上架" value="1" />
               <el-option label="下架" value="0" />
+              <el-option label="上架" value="1" />
+              <el-option label="待审核" value="2" />
+              <el-option label="审核失败" value="3" />
             </el-select>
           </el-form-item>
           <el-form-item label="服务分类">
@@ -48,19 +50,21 @@
           tooltip-effect="dark"
           style="width: 100%"
         >
-          <el-table-column prop="productId" label="服务id" show-overflow-tooltip />
-          <el-table-column label="服务主图" width="150" align="center">
+          <el-table-column prop="productId" label="序号" show-overflow-tooltip />
+          <el-table-column prop="productType" label="类型" show-overflow-tooltip />
+          <el-table-column prop="productCategory" label="大类" show-overflow-tooltip />
+          <el-table-column prop="productSubCategory" label="小类" show-overflow-tooltip />
+          <el-table-column prop="productName" label="服务名称" width="220" />
+          <el-table-column prop="shopName" label="服务提供商" width="220" />
+          <el-table-column prop="priceInterval" label="价格区间" show-overflow-tooltip />
+          <el-table-column prop="shopLocation" label="区域" show-overflow-tooltip />
+          <el-table-column prop="isRecommended" label="是否推荐" show-overflow-tooltip>
             <template slot-scope="scope">
-              <img height="80" width="80" :src="scope.row.productImage " alt srcset>
+              <span v-if="scope.row.isRecommended==0">否</span>
+              <span v-if="scope.row.isRecommended==1">是</span>
             </template>
           </el-table-column>
-          <el-table-column prop="productName" label="服务名称" width="220" />
-          <el-table-column prop="section" label="售价区间" show-overflow-tooltip />
-          <el-table-column prop="memberSection" label="会员价" show-overflow-tooltip />
-          <el-table-column prop="stockNumber" label="库存" show-overflow-tooltip />
-          <el-table-column prop="volume" label="销量" show-overflow-tooltip />
-          <el-table-column prop="createTime" label="创建时间" width="180" />
-          <el-table-column prop="volume" label="上架状态" show-overflow-tooltip>
+          <el-table-column prop="volume" label="服务状态" show-overflow-tooltip>
             <template slot-scope="scope">
               <span v-if="scope.row.shelveState==0">未上架</span>
               <span v-if="scope.row.shelveState==1">已上架</span>
@@ -74,7 +78,6 @@
                 <el-button type="text" @click="edit(scope.row)">编辑</el-button>
                 <el-button v-if="scope.row.shelveState==0" type="text" @click="down(scope.row)">上架</el-button>
                 <el-button v-if="scope.row.shelveState==1" type="text" @click="down(scope.row)">下架</el-button>
-                <el-button v-if="scope.row.shelveState==1" type="text" @click="setVipPrice(scope.row)">设置会员价</el-button>
                 <el-button v-if="scope.row.shelveState!=1" type="text" @click="del(scope.row)">删除</el-button>
               </div>
             </template>
@@ -198,6 +201,7 @@ export default {
       btnList: '',
       activeName: 'first',
       formInline: {
+        type: '养老服务',
         search: '', // 搜索字段
         shelveState: '', // 上架状态 1-上架 0-不上架 null-全部
         stock: '', // 库存状态 1-有库存 0-无库存 null-全部
@@ -226,9 +230,10 @@ export default {
   // 生命周期 - 创建完成（可以访问当前this实例）
   created() {},
   // 生命周期 - 挂载完成（可以访问DOM元素）
-  mounted() {
-    this.getAll(this.formInline)
-    this.queryAllCategory()
+  async mounted() {
+    await this.queryAllCategory()
+    await this.getAll(this.formInline)
+
     this.btnList = getBtnList()
   },
   // 方法集合
@@ -402,13 +407,32 @@ export default {
     },
     // 初始化查询所有数据
     async getAll(formInline) {
-      console.log(this.formInline.classifyId)
-      this.formInline.classifyId =
+      console.log("this.formInline.classifyId ", this.formInline.classifyId)
+      if (this.formInline.classifyId.length === 0) {
+        this.formInline.classifyId = ""
+      } else {
+        this.formInline.classifyId =
         this.formInline.classifyId[2] ||
         this.formInline.classifyId[1] ||
         this.formInline.classifyId[0] ||
         this.formInline.classifyId
+      }
+
       const res = await getClassifyGetAll(formInline)
+      for (const item of res.data.list) {
+        let productCategory = "";
+        let productSubCategory = "";
+        for (const category of this.categoryList.find(item => item.categoryName === '养老服务')['childs']) {
+          for (const subCategory of category["childs"]) {
+            if (subCategory["id"] === item.classifyId) {
+              productCategory = category["categoryName"];
+              productSubCategory = subCategory["categoryName"];
+            }
+          }
+        }
+        item.productCategory = productCategory;
+        item.productSubCategory = productSubCategory;
+      }
       this.total = res.data.total
       this.tableData = res.data.list
     },

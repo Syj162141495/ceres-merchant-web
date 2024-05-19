@@ -12,7 +12,7 @@
           <el-button v-if="!active" class="btnList" @click="last">上一步</el-button>
         </div>
         <!-- 步骤条 -->
-        <div class="stepsColor common">
+        <!-- <div class="stepsColor common">
           <div class="stepsOne common">
             <div :class="active ? 'one_class common' : 't_class common'">1</div>
             <div :class="active ? 'two_class' : 'w_class'">基本属性&服务描述</div>
@@ -22,7 +22,7 @@
             <div :class="active ? 't_class common' : 'one_class common'">2</div>
             <div :class="active ? 'w_class' : 'two_class' ">基本属性&服务描述</div>
           </div>
-        </div>
+        </div> -->
       </el-card>
       <!-- 服务 -->
       <div class="addCom common">
@@ -31,14 +31,40 @@
             <el-form-item label="服务名称">
               <el-input v-model="form.productName" maxlength="20" />
             </el-form-item>
-            <el-form-item>
+            <el-form-item label="服务简介">
+              <el-input v-model="form.productBrief" maxlength="20" />
+            </el-form-item>
+            <el-form-item label="服务介绍">
               <Tinymce ref="content" v-model="form.productText" class="tinymce-wrap" :height="200" />
             </el-form-item>
           </el-form>
         </div>
         <div v-if="active" class="rightCom">
           <el-form ref="form" :model="form" label-width="80px" style="margin:20px 20px">
-            <el-form-item label="服务分类">
+            <el-form-item label="服务类型">
+              <span>养老服务</span>
+            </el-form-item>
+            <el-form-item label="服务大类">
+              <el-select v-model="form.classifyParentId" placeholder="请选择服务大类" @change="changeParentClass">
+                <el-option
+                  v-for="(item,index) in parentClasses"
+                  :key="index"
+                  :label="item.categoryName"
+                  :value="item.id"
+                />
+              </el-select>
+            </el-form-item>
+            <el-form-item label="服务小类">
+              <el-select v-model="form.classifyId" placeholder="请选择服务小类" :disabled="!form.classifyParentId || form.classifyParentId === ''">
+                <el-option
+                  v-for="(item,index) in classes"
+                  :key="index"
+                  :label="item.categoryName"
+                  :value="item.id"
+                />
+              </el-select>
+            </el-form-item>
+            <!-- <el-form-item label="服务分类">
               <el-cascader
                 v-model="form.classifyId"
                 :options="classifyList"
@@ -50,6 +76,10 @@
                   children:'childs'
                 }"
               />
+            </el-form-item> -->
+            <el-form-item label="服务提供商">
+              <span>{{ shopInfo.shopName }}</span>
+              <!-- <el-input v-model="shopInfo.shopName" placeholder="请输入供应商名称" /> -->
             </el-form-item>
             <!-- <el-form-item label="服务分组">
               <el-select v-model="form.shopGroupId" placeholder="请选择服务分组">
@@ -64,18 +94,30 @@
             <el-form-item label="供应商">
               <el-input v-model="form.supplierName" placeholder="请输入供应商名称" />
             </el-form-item> -->
+            <el-form-item label="是否推荐">
+              <el-radio-group v-model="form.isRecommended">
+                <el-radio :label="1">是</el-radio>
+                <el-radio :label="0">否</el-radio>
+              </el-radio-group>
+            </el-form-item>
             <el-form-item label="需要物流">
               <el-radio-group v-model="form.ifLogistics">
                 <el-radio :label="1">是</el-radio>
                 <el-radio :label="0">否</el-radio>
               </el-radio-group>
             </el-form-item>
-            <el-form-item label="上架状态">
+            <el-form-item label="服务状态">
               <el-radio-group v-model="form.shelveState">
                 <el-radio :label="1">上架</el-radio>
                 <el-radio :label="0">下架</el-radio>
               </el-radio-group>
             </el-form-item>
+            <!-- <el-form-item label="服务状态">
+              <span v-if="form.shelveState==0">未上架</span>
+              <span v-if="form.shelveState==1">已上架</span>
+              <span v-if="form.shelveState==2">待审核</span>
+              <span v-if="form.shelveState==3">审核失败</span>
+            </el-form-item> -->
             <el-form-item label="允许超卖">
               <el-radio-group v-model="form.ifOversold">
                 <el-radio :label="1">允许</el-radio>
@@ -119,6 +161,7 @@ import {
   getClassifyUpdate
 } from '@/api/commodity'
 import { uploadUrl } from '@/utils/request'
+import { shopSysGetById } from '@/api/shopSys'
 import StyleInformation from './addComponent'
 export default {
   name: '',
@@ -131,11 +174,14 @@ export default {
       active: 1,
       action: uploadUrl,
       form: {
+        productType: '养老服务',
         productName: '', // 服务名称
         productBrief: '', // 服务简介
         shopGroupId: '', // 服务分组id
+        classifyParentId: '',
         classifyId: '', // 分类id
         supplierName: '', // 供应商名称
+        isRecommended: '', // 是否推荐 1-是 0-否
         ifLogistics: '', // 是否需要物流 1-是 0-否
         shelveState: ' ', // 是否上架 1-上架 0-不上架
         ifOversold: '', // 是否允许超卖 1-是 0-否
@@ -193,7 +239,7 @@ export default {
         skuAttrList: [
           {
             code: '',
-            skuName: '',
+            skuName: '服务规格',
             needImg: false,
             values: [
               {
@@ -204,24 +250,7 @@ export default {
             ]
           }
         ],
-        skuList: [
-          {
-            isDelete: '',
-            skuAttrCodeDTOList: [
-              {
-                code: '',
-                valueCode: ''
-              }
-            ],
-            skuAttrList: [],
-            sku: '',
-            skuImg: '',
-            price: 0,
-            originalPrice: 0,
-            stockNumber: 0,
-            weight: 0
-          }
-        ],
+        skuList: [],
         sortOrder: '',
         status: '',
         stock: '',
@@ -229,13 +258,19 @@ export default {
         views: '',
         weight: '',
         classifyId: 0,
-        choosenLabels: []
+        choosenLabels: [],
+        starRating: '',
+        area: '',
+        additionalInfoFlag: false
       },
       imgList: [],
       groupList: [],
       classifyList: [],
       dialogImageUrl: '',
-      dialogVisible: false
+      dialogVisible: false,
+      shopInfo: {},
+      parentClasses: [],
+      classes: []
     }
   },
   computed: {
@@ -243,13 +278,14 @@ export default {
       return this.$route.params.productId
     }
   },
-  mounted() {
+  async mounted() {
     this.groups()
-    this.selectList()
-    console.log(this.productId)
+    await this.selectList()
     if (this.productId) {
-      this.details()
+      await this.details()
     }
+    this.shopInfo = (await shopSysGetById({})).data
+    this.form.supplierName = this.shopInfo.shopName
   },
   methods: {
     handleImageSuccess(response) {
@@ -274,6 +310,14 @@ export default {
         // console.log(this.form);
         sessionStorage.setItem('form', JSON.stringify(this.form.skus))
         this.params.classifyId = this.form.classifyId;
+        this.params.additionalInfoFlag = false;
+        for (const category of this.classifyList.find(item => item.categoryName === '养老服务')['childs']) {
+          if (this.form.classifyParentId === category["id"]) {
+            if (category["categoryName"] === "机构服务" || category["categoryName"] === "居家上门") {
+              this.params.additionalInfoFlag = true;
+            }
+          }
+        }
       }
     },
     // 返回
@@ -312,8 +356,13 @@ export default {
         this.form.classifyId[1] ||
         this.form.classifyId[0] ||
         this.form.classifyId;
-      this.form.productBrief = !this.params.choosenLabels || this.params.choosenLabels.length === 0 ? "" : this.params.choosenLabels.join(',')
+      // this.form.productBrief = !this.params.choosenLabels || this.params.choosenLabels.length === 0 ? "" : this.params.choosenLabels.join(',')
       console.log(this.form)
+      console.log(this.params.additionalInfoFlag)
+      if (this.params.additionalInfoFlag) {
+        this.form.starRating = this.params.starRating;
+        this.form.area = this.params.area;
+      }
       if (this.productId) {
         this.form.productId = this.productId
         const sku = JSON.parse(sessionStorage.getItem('form'))
@@ -363,7 +412,19 @@ export default {
       this.form = res.data
       if (res.data.names.length !== 0) {
         this.params.skuAttrList = res.data.names
+        for (const skuAttr of this.params.skuAttrList) {
+          skuAttr['skuName'] = '服务规格'
+        }
       }
+      for (const category of this.classifyList.find(item => item.categoryName === '养老服务')['childs']) {
+        for (const subCategory of category["childs"]) {
+          if (subCategory["id"] === this.form.classifyId) {
+            this.form.classifyParentId = category["id"];
+          }
+        }
+      }
+      this.parentClasses = this.classifyList.find(item => item.categoryName === '养老服务')['childs'];
+      this.classes = this.parentClasses.find(item => item.id === this.form.classifyParentId) && this.parentClasses.find(item => item.id === this.form.classifyParentId)['childs'];
       // this.params.skuAttrList.forEach((item) => {
       //   var data = {}
       //   var arr = Object.keys(res.data)
@@ -371,14 +432,27 @@ export default {
       //     item.needImg = false
       //   }
       // })
+      if (this.form.shelveState === 2) {
+        this.form.shelveState = 1
+      } else if (this.form.shelveState === 3) {
+        this.form.shelveState = 0
+      }
       this.params.skuList = this.form.skus
       this.params.attrStyle = res.data.skus[0].style
       this.params.imgs = res.data.images
       this.params.choosenLabels = res.data.productBrief.split(',') ? res.data.productBrief.split(',') : []
+      this.params.starRating = res.data.starRating
+      this.params.area = res.data.area
     },
     async selectList() {
       const res = await getClassify()
       this.classifyList = res.data
+    },
+    changeParentClass() {
+      this.classes = this.parentClasses.find(item => item.id === this.form.classifyParentId) && this.parentClasses.find(item => item.id === this.form.classifyParentId)['childs'];
+      this.form.classifyId = this.classes[0].id
+      console.log(this.classes)
+      console.log(this.form.classifyId)
     }
   }
 }

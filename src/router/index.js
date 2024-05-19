@@ -353,7 +353,7 @@ export const constantRoutes = [{
     name: 'addCommodity',
     component: () => import('@/views/commodity/commoditySystem/addCommodity'),
     meta: {
-      title: '新增商品',
+      title: '新增服务',
       icon: 'table'
     }
   },

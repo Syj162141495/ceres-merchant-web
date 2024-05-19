@@ -1,6 +1,6 @@
 <template>
   <div class="style-information-component">
-    <label style="margin-right: 10px;">商品标签</label>
+    <!-- <label style="margin-right: 10px;">服务标签</label>
     <el-select v-model="form.choosenLabels" multiple>
       <el-option
         v-for="(item, index) in labels"
@@ -15,8 +15,16 @@
           <span style="color: azure;">{{ item.label }}</span>
         </el-tag>
       </el-option>
-    </el-select>
-    <el-form-item label="商品图片" />
+    </el-select> -->
+    <div style="display: flex;" v-show="form.additionalInfoFlag">
+      <el-form-item label="机构星级" style="margin-right: 20px;">
+        <el-input v-model="form.starRating" placeholder="请输入机构星级" />
+      </el-form-item>
+      <el-form-item label="机构面积" style="margin-right: 20px;">
+        <el-input v-model="form.area" placeholder="请输入机构面积" />
+      </el-form-item>
+    </div>
+    <el-form-item label="服务图片" />
     <div class="upload-wrap">
       <el-upload
         list-type="picture-card"
@@ -43,10 +51,10 @@
         </div>
       </el-upload>
     </div>
-    <el-form-item label="款式设置">
+    <el-form-item label="服务规格设置">
       <el-radio-group v-model="form.attrStyle" @change="changeAttrStyle">
-        <el-radio :label="0">单款式</el-radio>
-        <el-radio :label="1">多款式</el-radio>
+        <el-radio :label="0">单服务规格</el-radio>
+        <el-radio :label="1">多服务规格</el-radio>
       </el-radio-group>
     </el-form-item>
     <div class="style-container">
@@ -56,29 +64,29 @@
           style="width: 100%"
           :header-cell-style="{ background: '#EEF3FF', color: '#333333' }"
         >
-          <el-table-column label="规格">
+          <el-table-column label="服务规格">
             <template slot-scope="scope">
               <el-input v-model="singleStyle.skuValue" :sss="scope" maxlength="40" />
             </template>
           </el-table-column>
-          <el-table-column label="售价">
+          <el-table-column label="服务价格">
             <template slot-scope="scope">
               <el-input v-model="scope.row.price" type="number" oninput="value=value.replace(/-/, '')" />
             </template>
           </el-table-column>
-          <el-table-column label="原价">
+          <el-table-column label="原价格">
             <template slot-scope="scope">
               <el-input v-model="scope.row.originalPrice" type="number" oninput="value=value.replace(/-/, '')" />
             </template>
           </el-table-column>
-          <el-table-column label="库存">
+          <el-table-column label="成本价格">
             <template slot-scope="scope">
               <el-input v-model="scope.row.stockNumber" type="number" oninput="value=value.replace(/[^\d]/g,'')" />
             </template>
           </el-table-column>
-          <el-table-column label="重量(KG)">
+          <el-table-column label="服务介绍">
             <template slot-scope="scope">
-              <el-input v-model="scope.row.weight" type="number" oninput="value=value.replace(/-/, '')" />
+              <el-input v-model="scope.row.sku" />
             </template>
           </el-table-column>
 <!--          <el-table-column label="SKU">-->
@@ -90,7 +98,7 @@
       </div>
       <div v-else class="multiple-styles">
         <div v-for="(skuAttr, index) in form.skuAttrList" :key="index" class="sku-attr-list">
-          <el-form-item label="规格名">
+          <!-- <el-form-item label="规格名">
             <el-input v-model="skuAttr.skuName" maxlength="20" />
             <i v-if="index != 0" class="el-icon-close delImg" @click="delSkuAttrList(index)"></i>
             <el-checkbox
@@ -98,7 +106,7 @@
               v-model="skuAttr.needImg"
               style="margin-left: 20px;"
             >需要配图</el-checkbox>
-          </el-form-item>
+          </el-form-item> -->
           <el-form-item label="规格值">
             <div class="attr-value-list">
               <div
@@ -146,7 +154,7 @@
             </div>
           </el-form-item>
         </div>
-        <el-button class="add-attr-btn" type="primary" @click="addSkuAttrList">添加规格</el-button>
+        <!-- <el-button class="add-attr-btn" type="primary" @click="addSkuAttrList">添加规格</el-button> -->
         <el-table
           :data="skuList"
           style="width: 100%"
@@ -165,27 +173,22 @@
               }}
             </template>
           </el-table-column>
-          <el-table-column label="售价">
+          <el-table-column label="服务价格">
             <template slot-scope="scope">
               <el-input v-model="scope.row.price" type="number" oninput="value=value.replace(/-/, '')" />
             </template>
           </el-table-column>
-          <el-table-column label="原价">
+          <el-table-column label="原价格">
             <template slot-scope="scope">
               <el-input v-model="scope.row.originalPrice" type="number" oninput="value=value.replace(/-/, '')" />
             </template>
           </el-table-column>
-          <el-table-column label="库存">
+          <el-table-column label="成本价格">
             <template slot-scope="scope">
                 <el-input v-model="scope.row.stockNumber" type="number" oninput="value=value.replace(/[^\d]/g,'')" />
             </template>
           </el-table-column>
-          <el-table-column label="重量(KG)">
-            <template slot-scope="scope">
-              <el-input v-model="scope.row.weight" type="number" oninput="value=value.replace(/-/, '')" />
-            </template>
-          </el-table-column>
-          <el-table-column label="SKU">
+          <el-table-column label="服务介绍">
             <template slot-scope="scope">
               <el-input v-model="scope.row.sku" />
             </template>
@@ -336,15 +339,17 @@ export default {
   },
   computed: {
     skuAttrName() {
-      return (
-        this.form.skuAttrList &&
-        this.form.skuAttrList.filter(skuAttr => {
-          const hasChilds = skuAttr.values.some(attr => {
-            return attr.skuValue
-          })
-          return skuAttr.skuName && hasChilds
-        })
-      )
+      console.log(this.form.skuAttrList)
+      return this.form.skuAttrList;
+      // return (
+      //   this.form.skuAttrList &&
+      //   this.form.skuAttrList.filter(skuAttr => {
+      //     const hasChilds = skuAttr.values.some(attr => {
+      //       return attr.skuValue
+      //     })
+      //     return skuAttr.skuName && hasChilds
+      //   })
+      // )
     },
     singleStyle() {
       if (this.form.skuAttrList && this.form.skuAttrList[0]) {
@@ -356,6 +361,24 @@ export default {
     },
     skuList() {
       if (this.form.attrStyle === 0) {
+        if (this.form.skuList.length === 0) {
+          this.form.skuList = [{
+            isDelete: '',
+            skuAttrCodeDTOList: [
+              {
+                code: '',
+                valueCode: ''
+              }
+            ],
+            skuAttrList: [],
+            sku: '',
+            skuImg: '',
+            price: 0,
+            originalPrice: 0,
+            stockNumber: 0,
+            weight: 0
+          }]
+        }
         return this.form.skuList.slice(0, 1)
       }
       return this.form.skuList
@@ -454,11 +477,14 @@ export default {
       // if (index === 0) {
       //   this.form.skuAttrList = []
       // }
+      if (index === 1) {
+        addAttrValue(1);
+      }
     },
     addSkuAttrList() {
       this.form.skuAttrList.push({
         code: '',
-        skuName: '',
+        skuName: '服务规格',
         values: [
           {
             skuValue: '',
