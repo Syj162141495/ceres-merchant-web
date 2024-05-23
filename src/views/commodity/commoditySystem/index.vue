@@ -201,7 +201,7 @@ export default {
       btnList: '',
       activeName: 'first',
       formInline: {
-        type: '养老服务',
+        type: this.$route.meta.title.substring(0, 4),
         search: '', // 搜索字段
         shelveState: '', // 上架状态 1-上架 0-不上架 null-全部
         stock: '', // 库存状态 1-有库存 0-无库存 null-全部
@@ -286,7 +286,7 @@ export default {
     async edit(row) {
       this.$router.push({
         name: 'addCommodity',
-        params: { productId: row.productId }
+        params: { productId: row.productId, productType: this.formInline.type }
       })
       // let res = await getClassifyGetById({ productId: row.productId });
       // console.log(res);
@@ -422,7 +422,7 @@ export default {
       for (const item of res.data.list) {
         let productCategory = "";
         let productSubCategory = "";
-        for (const category of this.categoryList.find(item => item.categoryName === '养老服务')['childs']) {
+        for (const category of this.categoryList.find(item => item.categoryName === this.formInline.type)['childs']) {
           for (const subCategory of category["childs"]) {
             if (subCategory["id"] === item.classifyId) {
               productCategory = category["categoryName"];

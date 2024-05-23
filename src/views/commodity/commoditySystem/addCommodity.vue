@@ -42,7 +42,7 @@
         <div v-if="active" class="rightCom">
           <el-form ref="form" :model="form" label-width="80px" style="margin:20px 20px">
             <el-form-item label="服务类型">
-              <span>养老服务</span>
+              <span>{{ form.productType }}</span>
             </el-form-item>
             <el-form-item label="服务大类">
               <el-select v-model="form.classifyParentId" placeholder="请选择服务大类" @change="changeParentClass">
@@ -174,7 +174,7 @@ export default {
       active: 1,
       action: uploadUrl,
       form: {
-        productType: '养老服务',
+        productType: this.$route.params.productType,
         productName: '', // 服务名称
         productBrief: '', // 服务简介
         shopGroupId: '', // 服务分组id
@@ -311,9 +311,9 @@ export default {
         sessionStorage.setItem('form', JSON.stringify(this.form.skus))
         this.params.classifyId = this.form.classifyId;
         this.params.additionalInfoFlag = false;
-        for (const category of this.classifyList.find(item => item.categoryName === '养老服务')['childs']) {
+        for (const category of this.classifyList.find(item => item.categoryName === this.form.productType)['childs']) {
           if (this.form.classifyParentId === category["id"]) {
-            if (category["categoryName"] === "机构服务" || category["categoryName"] === "居家上门") {
+            if (this.$route.params.productType = '养老服务' && (category["categoryName"] === "机构服务" || category["categoryName"] === "居家上门")) {
               this.params.additionalInfoFlag = true;
             }
           }
@@ -416,14 +416,14 @@ export default {
           skuAttr['skuName'] = '服务规格'
         }
       }
-      for (const category of this.classifyList.find(item => item.categoryName === '养老服务')['childs']) {
+      for (const category of this.classifyList.find(item => item.categoryName === this.form.productType)['childs']) {
         for (const subCategory of category["childs"]) {
           if (subCategory["id"] === this.form.classifyId) {
             this.form.classifyParentId = category["id"];
           }
         }
       }
-      this.parentClasses = this.classifyList.find(item => item.categoryName === '养老服务')['childs'];
+      this.parentClasses = this.classifyList.find(item => item.categoryName === this.form.productType)['childs'];
       this.classes = this.parentClasses.find(item => item.id === this.form.classifyParentId) && this.parentClasses.find(item => item.id === this.form.classifyParentId)['childs'];
       // this.params.skuAttrList.forEach((item) => {
       //   var data = {}

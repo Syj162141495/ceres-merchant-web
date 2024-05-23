@@ -348,6 +348,33 @@ export const constantRoutes = [{
     }
   },
   {
+    path: 'commoditySystemMedical',
+    name: 'commoditySystemMedical',
+    component: () => import('@/views/commodity/commoditySystem/index'),
+    meta: {
+      title: '医疗服务管理',
+      icon: 'table'
+    }
+  },
+  {
+    path: 'commoditySystemOlderCaring',
+    name: 'commoditySystemOlderCaring',
+    component: () => import('@/views/commodity/commoditySystem/index'),
+    meta: {
+      title: '养老服务管理',
+      icon: 'table'
+    }
+  },
+  {
+    path: 'commoditySystemOthers',
+    name: 'commoditySystemOthers',
+    component: () => import('@/views/commodity/commoditySystem/index'),
+    meta: {
+      title: '其他服务管理',
+      icon: 'table'
+    }
+  },
+  {
     hidden: true, // (默认 false)
     path: 'addCommodity',
     name: 'addCommodity',
