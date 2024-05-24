@@ -27,7 +27,7 @@
               <el-input
                 v-model="loginForm.username"
                 type="text"
-                maxlength="11"
+                maxlength="20"
                 auto-complete="off"
                 placeholder="请输入账户"
                 class="iptHeight"
