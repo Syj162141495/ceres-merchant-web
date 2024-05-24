@@ -275,7 +275,10 @@ export default {
     },
     // 新增服务
     add() {
-      this.$router.push({ name: 'addCommodity', params: { id: '1' }})
+      this.$router.push({
+        name: 'addCommodity',
+        params: { id: '1', productType: this.formInline.type }
+      })
     },
     // 批量导入
     sends() {

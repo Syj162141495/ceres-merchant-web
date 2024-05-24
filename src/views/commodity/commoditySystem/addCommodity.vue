@@ -284,6 +284,18 @@ export default {
     if (this.productId) {
       await this.details()
     }
+    this.form.productType = this.$route.params.productType;
+    if (this.form.classifyId && this.form.classifyId !== "") {
+      for (const category of this.classifyList.find(item => item.categoryName === this.$route.params.productType)['childs']) {
+        for (const subCategory of category["childs"]) {
+          if (parseInt(subCategory["id"]) === parseInt(this.form.classifyId)) {
+            this.form.classifyParentId = category["id"];
+          }
+        }
+      }
+    }
+    this.parentClasses = this.classifyList.find(item => item.categoryName === this.$route.params.productType)['childs'];
+    this.classes = this.parentClasses.find(item => item.id === this.form.classifyParentId) && this.parentClasses.find(item => item.id === this.form.classifyParentId)['childs'];
     this.shopInfo = (await shopSysGetById({})).data
     this.form.supplierName = this.shopInfo.shopName
   },
@@ -313,7 +325,7 @@ export default {
         this.params.additionalInfoFlag = false;
         for (const category of this.classifyList.find(item => item.categoryName === this.form.productType)['childs']) {
           if (this.form.classifyParentId === category["id"]) {
-            if (this.$route.params.productType = '养老服务' && (category["categoryName"] === "机构服务" || category["categoryName"] === "居家上门")) {
+            if (this.form.productType === '养老服务' && (category["categoryName"] === "机构服务" || category["categoryName"] === "居家上门")) {
               this.params.additionalInfoFlag = true;
             }
           }
@@ -359,6 +371,9 @@ export default {
       // this.form.productBrief = !this.params.choosenLabels || this.params.choosenLabels.length === 0 ? "" : this.params.choosenLabels.join(',')
       console.log(this.form)
       console.log(this.params.additionalInfoFlag)
+
+      const pathSuffix = (this.form.productType === '医疗服务' ? 'Medical' :
+        this.form.productType === '养老服务' ? 'OlderCaring' : 'Others');
       if (this.params.additionalInfoFlag) {
         this.form.starRating = this.params.starRating;
         this.form.area = this.params.area;
@@ -383,7 +398,7 @@ export default {
             message: '成功!'
           })
           this.$router.push({
-            name: 'commoditySystem'
+            name: 'commoditySystem' + pathSuffix
           })
         }
       } else {
@@ -395,7 +410,7 @@ export default {
             message: '成功!'
           })
           this.$router.push({
-            name: 'commoditySystem'
+            name: 'commoditySystem' + pathSuffix
           })
         }
       }
@@ -416,15 +431,6 @@ export default {
           skuAttr['skuName'] = '服务规格'
         }
       }
-      for (const category of this.classifyList.find(item => item.categoryName === this.form.productType)['childs']) {
-        for (const subCategory of category["childs"]) {
-          if (subCategory["id"] === this.form.classifyId) {
-            this.form.classifyParentId = category["id"];
-          }
-        }
-      }
-      this.parentClasses = this.classifyList.find(item => item.categoryName === this.form.productType)['childs'];
-      this.classes = this.parentClasses.find(item => item.id === this.form.classifyParentId) && this.parentClasses.find(item => item.id === this.form.classifyParentId)['childs'];
       // this.params.skuAttrList.forEach((item) => {
       //   var data = {}
       //   var arr = Object.keys(res.data)
