@@ -440,10 +440,11 @@ export default {
     //   }
     // },
     handleImageSuccess(response) {
-      const url = response.data.url
+      const url = response.data.url.replace("http://58.59.92.190:17190", process.env.VUE_APP_DOMAIN_PREFIX).replace("local", "file");
       this.form.imgs.push({
         imgPath: url
       })
+      console.log(this.form.imgs)
     },
     // 移除图片
     handleRemove(file) {
