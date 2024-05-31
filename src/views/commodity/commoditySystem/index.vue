@@ -50,7 +50,7 @@
           tooltip-effect="dark"
           style="width: 100%"
         >
-          <el-table-column prop="productId" label="序号" show-overflow-tooltip />
+          <el-table-column type="index" prop="productId" label="序号" show-overflow-tooltip />
           <el-table-column prop="productType" label="类型" show-overflow-tooltip />
           <el-table-column prop="productCategory" label="大类" show-overflow-tooltip />
           <el-table-column prop="productSubCategory" label="小类" show-overflow-tooltip />
