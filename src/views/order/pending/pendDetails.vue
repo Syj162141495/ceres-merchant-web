@@ -76,7 +76,7 @@
             <div class="good_details">
               <ul>
                 <li>
-                  <img :src="item.image" />
+                  <img :src="item.image">
                   <div class="details">
                     <p>{{ item.productName }}</p>
                     <p class="skuDetails">
@@ -177,79 +177,79 @@
 </template>
 
 <script>
-import { orderGetById, orderGetSelect, orderDilevery } from "@/api/order";
+import { orderGetById, orderGetSelect, orderDilevery } from '@/api/order'
 export default {
   data() {
     return {
       order: {},
       form: {
         orderId: this.orderId,
-        express: "",
-        deliverFormid: "",
+        express: '',
+        deliverFormid: ''
       },
       isVisible: false,
       rules: {
         logisticsName: [
-          { required: false, message: "请输入快递公司名称", trigger: "blur" },
+          { required: false, message: '请输入快递公司名称', trigger: 'blur' }
         ],
         deliverFormid: [
-          { required: true, message: "请输入快递单号", trigger: "blur" },
+          { required: true, message: '请输入快递单号', trigger: 'blur' }
         ],
         express: [
-          { required: true, message: "请选择快递公司", trigger: "blur" },
-        ],
+          { required: true, message: '请选择快递公司', trigger: 'blur' }
+        ]
       },
-      companyList: [],
-    };
+      companyList: []
+    }
   },
   computed: {
     orderId() {
-      return this.$route.params.orderId;
-    },
+      return this.$route.params.orderId
+    }
   },
   created() {
-    this.getProductList();
+    this.getProductList()
   },
   methods: {
     async getProductList() {
-      const res = await orderGetById({ orderId: this.orderId });
-      this.order = res.data;
+      const res = await orderGetById({ orderId: this.orderId, queryType: this.$route.params.queryType })
+      this.order = res.data
     },
     close() {
-      this.$router.go(-1);
+      this.$router.go(-1)
     },
     confirm() {
       this.$refs.sendGoodsForm.validate((valid) => {
         if (valid) {
-          this.form.orderId = this.orderId;
+          this.form.orderId = this.orderId
           orderDilevery(this.form).then((res) => {
-            if (res.code === "") {
+            if (res.code === '') {
               this.$message({
-                message: "发货成功",
-                type: "success",
-              });
-              this.isVisible = false;
-              this.$router.go(-1);
+                message: '发货成功',
+                type: 'success'
+              })
+              this.isVisible = false
+              this.$router.go(-1)
             }
-          });
+          })
         }
-      });
+      })
     },
     cancel() {
-      this.isVisible = false;
+      this.isVisible = false
     },
     async getCompanyList() {
-      const res = await orderGetSelect();
-      if (res.code === "") {
-        this.companyList = res.data;
+      const res = await orderGetSelect()
+      if (res.code === '') {
+        this.companyList = res.data
       }
     },
     send() {
-      this.getCompanyList();
-      this.isVisible = true;
-    },
-  },
-};
+      this.getCompanyList()
+      this.isVisible = true
+    }
+  }
+}
 </script>
 
 <style lang="scss" scoped>
