@@ -41,28 +41,27 @@ export const constantRoutes = [{
   hidden: true
 },
 {
-  path: '/',
+  path: '/order',
   component: Layout,
-  redirect: '/order/pending',
-  name: '/order/pending',
+  redirect: '/order',
+  name: 'order',
   meta: {
     title: '订单',
     icon: 'el-icon-s-help'
   },
   children: [{
-    path: '/order/pending',
-    name: '/order/pending',
+    path: 'pending/:queryType',
+    name: 'pending',
     component: () => import('@/views/order/pending/index'),
     meta: {
       title: '待处理订单',
       icon: 'table'
     }
   },
-  // pendDetails
   {
     hidden: true, // (默认 false)
-    path: '/order/pendDetails',
-    name: '/order/pendDetails',
+    path: 'pending/:queryType/pendDetails',
+    name: 'pendDetails',
     component: () => import('@/views/order/pending/pendDetails'),
     meta: {
       title: '订单详情',
@@ -70,6 +69,7 @@ export const constantRoutes = [{
     }
   },
   {
+    hidden: true,
     path: '/order/aftersale',
     name: '/order/aftersale',
     component: () => import('@/views/order/aftersale/index'),
