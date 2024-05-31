@@ -283,7 +283,7 @@ export default {
     // 批量导入
     sends() {
       this.batchAdd = true
-      this.ba会员价tchFileList = []
+      this.batchFileList = []
     },
     // 编辑服务
     async edit(row) {

@@ -446,7 +446,7 @@ export default {
       this.params.skuList = this.form.skus
       this.params.attrStyle = res.data.skus[0].style
 
-      this.params.imgs = res.data.images.map(item => {
+      this.params.imgs = res.data.images.filter(item => item.imgPath !== "").map(item => {
         item.imgPath = item.imgPath.replace("http://58.59.92.190:17190", process.env.VUE_APP_DOMAIN_PREFIX).replace("local", "file");
         return item;
       })
