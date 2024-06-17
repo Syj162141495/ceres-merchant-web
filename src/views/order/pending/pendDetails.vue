@@ -6,20 +6,39 @@
 
     <div class="cotent">
       <div class="left_part">
+        <div class="pay_order_info">
+          <h2>下单人信息</h2>
+          <ul>
+            <li>
+              <p>
+                <span>下单账户:</span>
+                <span>{{ order.customerName }}</span>
+              </p>
+              <p>
+                <span>订单总数:</span>
+                <span>{{ order.total }}个</span>
+              </p>
+            </li>
+            <li>
+              <p>
+                <span>下单备注:</span>
+                <span>{{ order.remark }}</span>
+              </p>
+            </li>
+          </ul>
+        </div>
         <div class="order_info">
           <h2>订单信息</h2>
           <ul>
             <li>
               <p>
+                <span>服务商名称:</span>
+                <span>{{ order.shopName }}</span>
+              </p>
+              <p>
                 <span>订单ID:</span>
                 <span>{{ order.orderId }}</span>
               </p>
-              <p>
-                <span>支付单号:</span>
-                <span>{{ order.transactionId }}</span>
-              </p>
-            </li>
-            <li>
               <p>
                 <span>订单状态:</span>
                 <span v-if="order.state === 1">待支付</span>
@@ -28,16 +47,26 @@
                 <span v-if="order.state === 4">服务完成</span>
                 <span v-if="order.state === 5">已取消</span>
               </p>
-              <p>
-                <span>售后状态:</span>
-                <span>{{ order.afterStateName }}</span>
-              </p>
             </li>
             <li>
+              <p>
+                <span>支付单号:</span>
+                <span>{{ order.transactionId }}</span>
+              </p>
               <p>
                 <span>支付方式:</span>
                 <span v-if="order.paymentMode === 1">微信</span>
                 <span v-if="order.paymentMode === 2">支付宝</span>
+              </p>
+              <p>
+                <span>支付时间:</span>
+                <span>{{ order.paymentTime }}</span>
+              </p>
+            </li>
+            <li>
+              <p>
+                <span>售后状态:</span>
+                <span>{{ order.afterStateName }}</span>
               </p>
               <p>
                 <span>创建时间:</span>
@@ -46,20 +75,15 @@
             </li>
             <li>
               <p>
-                <span>支付时间:</span>
-                <span>{{ order.paymentTime }}</span>
+                <span>备注:</span>
+                <span>{{ order.remark }}</span>
               </p>
-              <p>备注:{{ order.remark }}</p>
             </li>
           </ul>
         </div>
         <div class="goods_info">
           <h2>服务信息</h2>
-          <div
-            v-for="(item, index) in order.products"
-            :key="index"
-            class="goods_list"
-          >
+          <div v-for="(item, index) in order.products" :key="index" class="goods_list">
             <div class="good_price">
               <ul>
                 <li>
@@ -80,15 +104,11 @@
                   <div class="details">
                     <p>{{ item.productName }}</p>
                     <p class="skuDetails">
-                      <span
-                        v-for="(detailsItem, detailsindex) of item.skuDetails"
-                        :key="detailsindex"
-                        class="detail_span"
-                      >
+                      <span v-for="(detailsItem, detailsindex) of item.skuDetails" :key="detailsindex"
+                        class="detail_span">
                         {{ detailsItem.skuName }}: {{ detailsItem.skuValue }}
                       </span>
                     </p>
-                    <p>SKU: {{ item.skuId }}</p>
                   </div>
                 </li>
                 <li class="cen">
@@ -120,48 +140,17 @@
           </div>
         </div> -->
       </div>
-      <div class="right_part">
-        <div class="pay_order_info">
-          <h2>下单人信息</h2>
-          <p>客户名称: {{ order.customerName }}</p>
-          <p>订单总数: {{ order.total }}个</p>
-          <p>下单备注: {{ order.remark }}</p>
-        </div>
-        <!-- <div class="take_goods_info">
-          <h2>收货信息</h2>
-          <p>姓名: {{ order.receiveName }}</p>
-          <p>手机号: {{ order.receivePhone }}</p>
-          <p>地址: {{ order.receiveAdress }} {{ order.address }}</p>
-        </div> -->
-      </div>
     </div>
     <!-- 发货 -->
-    <el-dialog
-      :visible.sync="isVisible"
-      title="发货"
-      :close-on-click-modal="false"
-    >
-      <el-form
-        ref="sendGoodsForm"
-        :model="form"
-        :rules="rules"
-        label-width="80px"
-      >
+    <el-dialog :visible.sync="isVisible" title="发货" :close-on-click-modal="false">
+      <el-form ref="sendGoodsForm" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="快递公司" prop="express">
           <el-select v-model="form.express" filterable>
-            <el-option
-              v-for="(item, index) in companyList"
-              :key="index"
-              :label="item.dictName"
-              :value="item.dictId"
-            />
+            <el-option v-for="(item, index) in companyList" :key="index" :label="item.dictName" :value="item.dictId" />
           </el-select>
         </el-form-item>
         <el-form-item label="快递单号" prop="deliverFormid">
-          <el-input
-            v-model="form.deliverFormid"
-            oninput="value = value.replace(/[^\a-\z\A-\Z0-9]/g,'')"
-          />
+          <el-input v-model="form.deliverFormid" oninput="value = value.replace(/[^\a-\z\A-\Z0-9]/g,'')" />
         </el-form-item>
         <!--
         <el-form-item label="快递公司编号" prop="shipperCode" v-if="false">
@@ -254,21 +243,25 @@ export default {
 
 <style lang="scss" scoped>
 @import url("../../../styles/elDialog.scss");
+
 ul {
   list-style: none;
   margin: 0;
   padding: 0;
 }
+
 .order_details {
   h3 {
     // margin-left: 20px;
     margin: 20px 0 20px 20px;
     font-weight: 700;
   }
+
   .close {
     // float: right;
     position: absolute;
     right: 20px;
+
     &:hover {
       cursor: pointer;
     }
@@ -278,6 +271,7 @@ ul {
     margin: 20px;
     overflow: hidden;
     font-size: 14px;
+
     .goods_info,
     .order_info,
     .logistics_info,
@@ -287,12 +281,14 @@ ul {
       margin-bottom: 10px;
       padding: 10px 20px;
     }
+
     .pay_order_info,
     .take_goods_info {
       p {
         line-height: 30px;
       }
     }
+
     h2 {
       margin: 0;
       font-weight: 400;
@@ -301,21 +297,27 @@ ul {
       font-size: 18px;
       text-align: -10px;
     }
+
     .left_part {
       float: left;
       width: calc(70% - 10px);
       margin-right: 10px;
-      .order_info {
+
+      .pay_order_info {
         box-sizing: border-box;
+
         ul {
           padding: 10px 30px;
+
           li {
             overflow: hidden;
+
             p {
               width: 50%;
               float: left;
               font-size: 14px;
               line-height: 30px;
+
               span {
                 &:nth-child(2) {
                   margin-left: 10px;
@@ -324,13 +326,45 @@ ul {
             }
           }
         }
+      }
+
+      .order_info {
+        box-sizing: border-box;
+
+        ul {
+          padding: 10px 30px;
+
+          li {
+            overflow: hidden;
+
+            p {
+              width: 33%;
+              float: left;
+              font-size: 14px;
+              line-height: 30px;
+
+              span {
+                &:nth-child(2) {
+                  margin-left: 10px;
+                }
+
+                &:nth-child(3) {
+                  margin-left: 10px;
+                }
+              }
+            }
+          }
+        }
+
         .remarks {
           margin-left: 30px !important;
         }
       }
+
       .goods_info {
         .goods_list {
           padding: 15px;
+
           .good_price {
             ul {
               li {
@@ -340,37 +374,45 @@ ul {
                     float: left;
                   }
                 }
+
                 p {
                   line-height: 30px;
                 }
               }
             }
+
             border-bottom: 1px gray solid;
           }
+
           .good_details {
             ul {
               display: flex;
               margin-top: 20px;
+
               li {
                 flex: 3;
                 display: flex;
                 justify-content: space-around;
                 align-items: center;
+
                 .details {
                   margin: 0 30px;
                   width: 180px;
                   line-height: 20px;
+
                   .skuDetails {
                     margin-top: 8px;
                     margin-bottom: 8px;
                     margin-right: 10px;
                     line-height: 1;
                     color: #9e9e9e;
+
                     .detail_span {
                       margin-right: 8px;
                     }
                   }
                 }
+
                 img {
                   width: 50px;
                   height: 50px;
@@ -380,16 +422,20 @@ ul {
           }
         }
       }
+
       .logistics_info {
         .send_good {
           display: block;
           margin: 20px auto !important;
+
           &:hover {
             cursor: pointer;
           }
         }
+
         .logistics_content {
           padding: 0 10%;
+
           .logistics_title {
             span {
               margin: 20px 0;
@@ -397,6 +443,7 @@ ul {
               width: 45%;
             }
           }
+
           .logistics_item {
             span {
               display: inline-block;
